@@ -1,0 +1,97 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "prokname-studio"
+# Version is NOT declared here: it is generated at build time from the single
+# source of truth in src/prokname_studio/__init__.py (see [tool.hatch.version]),
+# so a release cannot ship a bundle whose metadata contradicts
+# `prokname-studio --version` or the version stamped into the app's About box.
+dynamic = ["version"]
+description = "ProkName Studio: the bilingual, light/dark native desktop front-end for the ProkName prokaryotic nomenclature assistant"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+authors = [
+    { name = "Zichao Zeng", email = "zengzichao@sjtu.edu.cn" },
+]
+keywords = ["nomenclature", "taxonomy", "ICNP", "SeqCode", "LPSN", "prokaryotes", "gui", "desktop"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: MacOS X",
+    "Environment :: Win32 (MS Windows)",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    # The engine Studio drives. Studio is a *consumer* of prokname, never part of
+    # it: every call goes through prokname's public API (generate / check_name /
+    # route / ProjectStore / presentation.decision), which is why the version
+    # floor is the API contract the views were written against rather than a
+    # build-time pin. Install it from the ProkName source repository; see README.
+    "prokname>=0.1.0",
+    # Native desktop toolkit. This is a runtime dependency, not an extra: an
+    # installed Studio always has Qt, so nothing here needs to code for its
+    # absence and no test may skip because Qt "isn't installed".
+    "PySide6>=6.7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "pytest-qt>=4.4",
+    "ruff>=0.6",
+]
+# Freezing the .app / .exe is a release-time step on a machine with Qt present.
+build = [
+    "pyinstaller>=6.0",
+]
+
+[project.scripts]
+prokname-studio = "prokname_studio.app:main"
+
+[project.urls]
+Homepage = "https://github.com/ZengZichao/ProkName-Studio"
+Source = "https://github.com/ZengZichao/ProkName-Studio"
+Issues = "https://github.com/ZengZichao/ProkName-Studio/issues"
+# The engine this front-end drives, and whose issue tracker owns engine bugs.
+"Upstream engine" = "https://github.com/ZengZichao/ProkName"
+
+[tool.hatch.version]
+path = "src/prokname_studio/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/prokname_studio"]
+# Everything under src/prokname_studio ships, including assets/icon.svg: the
+# window icon is read through importlib.resources, so an asset that does not
+# reach the wheel is an app that opens without its own icon.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# E741: single-letter loop variables carried over from the engine's test suite
+# B905: zip() strictness is enforced by explicit length checks where they matter
+# UP042: the str-Enum replacement is a design change, not a lint fix
+ignore = ["E741", "B905", "UP042"]
+
+[tool.ruff.lint.per-file-ignores]
+# PyInstaller .spec files use builtins (Analysis, EXE, PYZ, COLLECT, BUNDLE)
+# injected at build time — ruff doesn't know about them.
+"*.spec" = ["F821", "UP009"]
+
+[tool.coverage.run]
+source = ["src/prokname_studio"]
