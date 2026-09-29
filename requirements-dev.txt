@@ -1,0 +1,24 @@
+# prokname-studio — dev dependency ranges (runtime + dev)
+# The authoritative declaration is pyproject.toml
+# ([project].dependencies and [project.optional-dependencies].dev).
+# Keep this file in sync when pyproject.toml changes.
+# Install runtime:  pip install -e .
+# Install dev:      pip install -e ".[dev]"  or  pip install -r requirements-dev.txt
+#
+# Direct dependencies only. `prokname` must already be installed (or be
+# resolvable from your index) before pip can build this package — see
+# requirements.txt and README.md.
+
+# Runtime (mirror of pyproject.toml [project].dependencies)
+prokname>=0.1.0
+PySide6>=6.7
+
+# Dev (mirror of pyproject.toml [project.optional-dependencies].dev)
+pytest>=8.0
+pytest-cov>=5.0
+pytest-qt>=4.4
+ruff>=0.6
+
+# Release-time only (pyproject.toml [project.optional-dependencies].build):
+#   pip install -e ".[build]"
+# pyinstaller>=6.0

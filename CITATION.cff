@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+message: "If you use ProkName Studio in your research, please cite it as follows."
+# Version (mirrors the engine's convention): the single source of truth
+# is the `__version__` literal in src/prokname_studio/__init__.py, which pyproject.toml
+# and the PyInstaller spec both read. CFF is plain YAML — it cannot execute that file —
+# so the two `version:` fields below (this record and `preferred-citation`) are mirrors,
+# kept honest by tests/test_citation_metadata.py, which fails if they drift.
+title: "ProkName Studio: a bilingual, light/dark native desktop front-end for the ProkName prokaryotic nomenclature assistant"
+authors:
+  - family-names: "Zeng"
+    given-names: "Zichao"
+    orcid: "https://orcid.org/0000-0001-6553-970X"
+type: software
+version: 0.1.0
+date-released: "2026-09-29"
+license: MIT
+license-url: "https://opensource.org/licenses/MIT"
+repository-code: "https://github.com/ZengZichao/ProkName-Studio"
+keywords:
+  - nomenclature
+  - taxonomy
+  - ICNP
+  - SeqCode
+  - LPSN
+  - prokaryotes
+  - desktop
+  - gui
+abstract: >-
+  ProkName Studio is the native desktop front-end for prokname, a decision-support
+  tool for prokaryotic nomenclature under the ICNP and the SeqCode. It exposes the
+  engine's deterministic etymology-driven name generation, grammatical agreement
+  validation, dual-code routing and two-tier deduplication through five panels, with
+  a live Chinese / English interface switch and a light / dark appearance switch.
+  Studio adds no naming logic of its own: every value on screen is returned by
+  prokname's public API, and the engine is a dependency of this project rather than
+  a layer inside it.
+# The engine this front-end drives is a separate citable work; the version floor in
+# pyproject.toml is the API contract these views were written against.
+related-identifiers:
+  - value: "ZengZichao/ProkName"
+    type: repository
+    relation: derives-from
+preferred-citation:
+  type: software
+  title: "ProkName Studio: the desktop front-end for prokname"
+  authors:
+    - family-names: "Zeng"
+      given-names: "Zichao"
+      orcid: "https://orcid.org/0000-0001-6553-970X"
+  # Second mirror of the single source of truth — keep equal to the
+  # `version:` above; tests/test_citation_metadata.py enforces both.
+  version: 0.1.0
+  date-released: "2026-09-29"
+  license: MIT
+  repository-code: "https://github.com/ZengZichao/ProkName-Studio"

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ProkName Studio application icon.
+
+  The mark is a rod-shaped cell (bacillus) with its septum and a single
+  flagellum, over the compliance check that names the product's purpose:
+  deciding whether a prokaryotic name may be used. It is a vector on purpose —
+  the same file renders the 16 px toolbar icon and the 512 px app icon without
+  a second asset to keep in sync.
+
+  Colours are the Studio palette (see prokname_studio.appearance): the blue
+  badge is the accent the light and dark themes share, green is the "no clear
+  conflict" token. The tile keeps its own background, so the mark reads on a
+  light or a dark desktop without a theme-specific variant.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 64 64" role="img" aria-label="ProkName Studio">
+  <defs>
+    <linearGradient id="prokname-tile" x1="0" y1="0" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#2e8bc9"/>
+      <stop offset="1" stop-color="#1c5c86"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="1.5" y="1.5" width="61" height="61" rx="15" fill="url(#prokname-tile)"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="15" fill="none" stroke="#154a6e" stroke-width="1"/>
+
+  <!-- the cell body: a rounded rod -->
+  <rect x="11" y="21" width="30" height="14" rx="7" fill="#ffffff"/>
+  <!-- septum — the division that makes it a living, replicating cell -->
+  <path d="M28 23.2v9.6" stroke="#a8d4ef" stroke-width="2.4" stroke-linecap="round"/>
+  <!-- flagellum -->
+  <path d="M41 28c3.6 0 3.2-7 6.4-7s3.2 14 6.4 14" fill="none" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"/>
+
+  <!-- the nomenclature check -->
+  <path d="M13 44.5l4.2 4.4L26 39" fill="none" stroke="#27ae60" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31 45.5h18" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+</svg>
