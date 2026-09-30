@@ -6,6 +6,8 @@
 
 [English](README.md) | [中文](README.zh.md)
 
+[![DOI: 10.5281/zenodo.23052800](https://zenodo.org/badge/DOI/10.5281/zenodo.23052800.svg)](https://doi.org/10.5281/zenodo.23052800)
+
 The native desktop front end for **[prokname](https://github.com/ZengZichao/ProkName)**,
 the prokaryotic nomenclature assistant: deterministic etymology-driven name
 generation, gender-agreement validation, dual-code (ICNP / SeqCode) routing and a
@@ -202,6 +204,7 @@ Interface bugs, translations, theming and packaging belong [here](https://github
 If you use ProkName Studio, please cite the software ([`CITATION.cff`](CITATION.cff)):
 
 - **Zichao Zeng** (ORCID [0000-0001-6553-970X](https://orcid.org/0000-0001-6553-970X))
+- **Zenodo**: concept DOI [10.5281/zenodo.23052800](https://doi.org/10.5281/zenodo.23052800), which always resolves to the latest archived release; this version is [10.5281/zenodo.23052801](https://doi.org/10.5281/zenodo.23052801)
 
 Studio is the front end; the nomenclature work it displays is the engine's, so a
 methods citation should point at
