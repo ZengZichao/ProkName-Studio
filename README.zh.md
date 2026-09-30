@@ -6,6 +6,8 @@
 
 [English](README.md) | [中文](README.zh.md)
 
+[![DOI: 10.5281/zenodo.23052800](https://zenodo.org/badge/DOI/10.5281/zenodo.23052800.svg)](https://doi.org/10.5281/zenodo.23052800)
+
 **[prokname](https://github.com/ZengZichao/ProkName)（原核生物命名辅助引擎）的原生桌面前端**：确定性的词源驱动命名生成、性数一致校验、双法典（ICNP / SeqCode）路由与两级查重——把终端里的能力放进一个窗口。
 
 **天生双语、双色调**：界面可在中文与英文之间即时切换，也可在亮色与暗色之间切换，无需重启。
@@ -145,6 +147,7 @@ pyinstaller ProkNameStudio.spec --noconfirm
 若您使用 ProkName Studio，请引用本软件（[`CITATION.cff`](CITATION.cff)）：
 
 - **Zichao Zeng**（ORCID [0000-0001-6553-970X](https://orcid.org/0000-0001-6553-970X)）
+- **Zenodo 存档**：concept DOI [10.5281/zenodo.23052800](https://doi.org/10.5281/zenodo.23052800)，始终解析到最新版本；本版本对应 [10.5281/zenodo.23052801](https://doi.org/10.5281/zenodo.23052801)
 
 Studio 只是前端，屏幕上呈现的命名工作属于引擎，因此方法学引用应同时指向
 [prokname](https://github.com/ZengZichao/ProkName) 及其
