@@ -5,6 +5,18 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  # The engine (ProkName@main) and the PyPI index both drift: a quiet week with
+  # no local commits must still surface upstream breakage as a red scheduled
+  # run, not as a surprise at the next push.
+  schedule:
+    - cron: '30 2 * * 1'
+
+# A newer commit on the same ref supersedes the older run: this matrix is 12
+# jobs and macOS queuing alone stretches to hours, so letting a replaced run
+# burn to completion buys nothing.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   # The engine ProkName Studio depends on, as a published source rather than a
@@ -298,3 +310,25 @@ jobs:
             echo "FAIL: the frozen app exited within 8s"
             exit 1
           fi
+
+  gate:
+    # One stable name for branch protection: "required status checks" would
+    # otherwise have to spell out all 12 matrix job names, and every Python
+    # version added later would silently lose protection. The gate is green
+    # only when every job above is.
+    name: CI gate
+    needs: [lint, test, wheel, bundle]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any required job did not succeed
+        run: |
+          results='${{ join(needs.*.result, ' ') }}'
+          echo "upstream results: $results"
+          for r in $results; do
+            case "$r" in
+              success) ;;
+              *) echo "FAIL: a required job finished as '$r'"; exit 1 ;;
+            esac
+          done
+          echo "OK: lint, test, wheel and bundle all succeeded"
