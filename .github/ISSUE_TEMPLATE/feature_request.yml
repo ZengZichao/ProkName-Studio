@@ -1,0 +1,22 @@
+name: Feature request / 功能建议
+description: Suggest an idea for ProkName Studio / 为 ProkName Studio 提一条建议
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / 想解决的问题
+      description: What are you trying to do that the app cannot do today? / 你想完成什么，但目前做不到？
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution / 期望的方案
+      description: What would you like to happen? / 你希望它如何表现？
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered / 考虑过的替代方案
