@@ -1,5 +1,7 @@
 # Security Policy / 安全策略
 
+[English](SECURITY.md) | [中文](SECURITY.zh.md)
+
 ## Supported versions / 支持的版本
 
 | Version | Supported / 是否支持 |
