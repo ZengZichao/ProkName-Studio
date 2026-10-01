@@ -1,0 +1,49 @@
+name: Bug report / 缺陷报告
+description: Report something broken in ProkName Studio / 报告 ProkName Studio 的问题
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. English or 中文 — either is fine.
+        感谢反馈，中英文均可。
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened? / 发生了什么
+      description: What did you see, and what did you expect instead? / 你看到了什么？期望的行为是什么？
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce / 复现步骤
+      placeholder: |
+        1. Open … / 打开…
+        2. Click … / 点击…
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: ProkName Studio version / 版本
+      description: Output of `prokname-studio --version`
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system / 操作系统
+      options:
+        - macOS
+        - Windows
+        - Linux
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots / 日志或截图
+      description: Console output, traceback, or screenshots. / 控制台输出、报错堆栈或截图。
