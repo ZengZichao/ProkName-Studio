@@ -7,6 +7,10 @@
 [English](README.md) | [中文](README.zh.md)
 
 [![DOI: 10.5281/zenodo.23052800](https://zenodo.org/badge/DOI/10.5281/zenodo.23052800.svg)](https://doi.org/10.5281/zenodo.23052800)
+[![CI](https://github.com/ZengZichao/ProkName-Studio/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/ProkName-Studio/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![ORCID](https://img.shields.io/badge/ORCID-0000--0001--6553--970X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0000-0001-6553-970X)
 
 The native desktop front end for **[prokname](https://github.com/ZengZichao/ProkName)**,
 the prokaryotic nomenclature assistant: deterministic etymology-driven name
