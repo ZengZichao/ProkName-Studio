@@ -151,6 +151,76 @@ STRINGS: dict[str, dict[str, str]] = {
         "data_col_version": "版本",
         "data_col_status": "状态",
         "data_empty": "暂无数据资产信息。",
+        # -- getting-started guide (opened only from its button/menu entry) --
+        "guide_button": "新手引导",
+        "guide_title": "新手引导",
+        "guide_prev": "上一步",
+        "guide_next": "下一步",
+        "guide_go": "前往该页面",
+        "guide_close": "关闭",
+        "guide_step_overview": "概览与工作流",
+        "guide_step_check": "① 查重",
+        "guide_step_generate": "② 生成",
+        "guide_step_route": "③ 路由",
+        "guide_step_project": "④ 项目",
+        "guide_step_data": "⑤ 数据资产",
+        "guide_step_tips": "界面操作技巧",
+        "guide_content_overview": (
+            "<p>ProkName Studio 是 prokname 命名引擎的桌面前端，按推荐工作流组织成五个页面：</p>"
+            "<ol>"
+            "<li><b>查重</b> —— 输入候选名，核对权威来源的冲突裁定与近似同名；</li>"
+            "<li><b>生成</b> —— 按词干与法典规则批量生成合规候选学名；</li>"
+            "<li><b>路由</b> —— 依据数据来源在 ICNP / SeqCode 双法典间选择可行路径；</li>"
+            "<li><b>项目</b> —— 把候选名入库、评分并导出 JSON / CSV / Markdown 交付物；</li>"
+            "<li><b>数据资产</b> —— 查看规则语料与词表的版本和状态。</li>"
+            "</ol>"
+            "<p>顶部工具栏可随时切换语言与外观。本引导默认不打开，"
+            "需要时点击工具栏右侧的「新手引导」按钮即可。</p>"
+        ),
+        "guide_content_check": (
+            "<p>1. 在「候选名」框输入要核查的名称（如 <i>Bacillus wukongus</i>）；<br>"
+            "2. 选择近似匹配口径与最大编辑距离；<br>"
+            "3. 点击「查重」，阅读结论徽标、逐权威源结果表与近似匹配清单。</p>"
+            "<p>Studio 只做离线查证：「无法查证」不等于「未发现」，界面会明确区分两者。"
+            "查重结论会随同名候选进入项目，保证可追溯。</p>"
+        ),
+        "guide_content_generate": (
+            "<p>1. 输入<b>词干</b>（如 <i>Wukong</i>），选择类型与阶元；种级名称需填写属名；<br>"
+            "2. 点击「生成」，在「候选结果」表格中查看候选名、类别、性别与合规状态；<br>"
+            "3. 点击表格任意一行，下方即渲染该候选名的完整推导树；<br>"
+            "4. 选中一行后点击「加入项目」，候选名即写入所选项目。</p>"
+            "<p>表格各列宽度可通过拖动表头分隔线调节；表格与推导树之间的上下分界线"
+            "也可拖动，以放大推导树。</p>"
+        ),
+        "guide_content_route": (
+            "<p>1. 选择数据来源（纯培养 / MAG / SAG / 未知）；<br>"
+            "2. 勾选是否为 <i>Candidatus</i>（候选种），并选择 ICNP 先占状态；<br>"
+            "3. 点击「路由」，在「可行路径」表中查看各法典的角色与利弊，"
+            "下方展示警告与备注。</p>"
+            "<p>路径表与警告/备注之间的上下分界线可拖动，方便阅读较长的利弊列表。</p>"
+        ),
+        "guide_content_project": (
+            "<p>左侧为项目列表：输入项目名称与元数据后点击「创建」；不再需要的项目可删除。</p>"
+            "<p>右侧为所选项目的候选名表格：选中一行后在下方录入评分（0–5），"
+            "并可通过「导出」生成 JSON / CSV / Markdown 交付物（含免责声明与数据来源署名）。</p>"
+            "<p>左右两块之间的竖直分界线可拖动，自由调节两块的宽度。</p>"
+        ),
+        "guide_content_data": (
+            "<p>「数据资产」面板报告引擎各规则文件的版本、门控状态与消费方。"
+            "仍在等待专家签字的资产会如实标注，便于了解当前能力的边界。</p>"
+        ),
+        "guide_content_tips": (
+            "<ul>"
+            "<li><b>拖动分界线</b>：页面内的竖直/横向分界线均可用鼠标拖动，"
+            "自由调节相邻区域的大小。</li>"
+            "<li><b>拖动列宽</b>：「候选结果」等表格的列宽可拖动表头分隔线调节；"
+            "最后一列自动填满剩余宽度。</li>"
+            "<li><b>语言与外观</b>：顶部工具栏可即时切换中文 / English 与亮 / 暗色主题，"
+            "无需重启。</li>"
+            "<li><b>再次打开本引导</b>：点击顶部工具栏的「新手引导」按钮，"
+            "或「帮助」菜单中的同名条目。</li>"
+            "</ul>"
+        ),
         # -- common --
         "lang": "语言",
         "lang_auto": "自动",
@@ -328,6 +398,99 @@ STRINGS: dict[str, dict[str, str]] = {
         "data_col_version": "Version",
         "data_col_status": "Status",
         "data_empty": "No data asset information available.",
+        # -- getting-started guide (opened only from its button/menu entry) --
+        "guide_button": "Getting started",
+        "guide_title": "Getting Started",
+        "guide_prev": "Previous",
+        "guide_next": "Next",
+        "guide_go": "Go to this page",
+        "guide_close": "Close",
+        "guide_step_overview": "Overview & workflow",
+        "guide_step_check": "1 · Check",
+        "guide_step_generate": "2 · Generate",
+        "guide_step_route": "3 · Route",
+        "guide_step_project": "4 · Project",
+        "guide_step_data": "5 · Data Assets",
+        "guide_step_tips": "Interface tips",
+        "guide_content_overview": (
+            "<p>ProkName Studio is the desktop front-end for the prokname engine, "
+            "organised into five pages that follow the recommended workflow:</p>"
+            "<ol>"
+            "<li><b>Check</b> — enter a candidate name and compare it against "
+            "authority verdicts and near matches;</li>"
+            "<li><b>Generate</b> — produce compliant candidate names in bulk from a "
+            "stem and the code rules;</li>"
+            "<li><b>Route</b> — choose viable paths between ICNP / SeqCode from the "
+            "data source;</li>"
+            "<li><b>Project</b> — store candidates, rate them, and export JSON / "
+            "CSV / Markdown deliverables;</li>"
+            "<li><b>Data Assets</b> — inspect rule corpora and lexicon versions and "
+            "status.</li>"
+            "</ol>"
+            "<p>The toolbar switches language and appearance at any time. This guide "
+            "is never opened on its own: click the Getting-started button on the "
+            "right of the toolbar whenever you want it.</p>"
+        ),
+        "guide_content_check": (
+            "<p>1. Type the name to verify into the candidate-name box (e.g. "
+            "<i>Bacillus wukongus</i>);<br>"
+            "2. choose the near-match mode and the maximum edit distance;<br>"
+            "3. click Check, then read the verdict badge, the per-authority table "
+            "and the near-match list.</p>"
+            "<p>Studio verifies offline only: 'cannot check' is never 'not found', "
+            "and the interface keeps the two apart. A verdict travels with its name "
+            "into the project, keeping it traceable.</p>"
+        ),
+        "guide_content_generate": (
+            "<p>1. Enter a <b>stem</b> (e.g. <i>Wukong</i>) and pick a type and a "
+            "rank; species-rank names need a genus;<br>"
+            "2. click Generate and read the candidates, categories, genders and "
+            "compliance in the results table;<br>"
+            "3. click any row to render that candidate's full derivation tree "
+            "below;<br>"
+            "4. with a row selected, click Add to project to write it into a "
+            "project.</p>"
+            "<p>Every column width is adjustable by dragging its header divider, and "
+            "the divider between the table and the derivation tree is draggable "
+            "too.</p>"
+        ),
+        "guide_content_route": (
+            "<p>1. Choose the data source (pure culture / MAG / SAG / unknown);<br>"
+            "2. tick whether the name is <i>Candidatus</i>, and set the ICNP "
+            "pre-emption status;<br>"
+            "3. click Route and read each code's role and trade-offs in the viable "
+            "paths table, with warnings and notes underneath.</p>"
+            "<p>The divider between the path table and the warnings/notes pane is "
+            "draggable, which helps with long trade-off lists.</p>"
+        ),
+        "guide_content_project": (
+            "<p>The left pane lists projects: type a project name and metadata, then "
+            "click Create; projects you no longer need can be deleted.</p>"
+            "<p>The right pane shows the selected project's candidates: select a row "
+            "and record a rating (0–5) below, then use Export to produce JSON / CSV "
+            "/ Markdown deliverables (with the disclaimer and data-source "
+            "attribution included).</p>"
+            "<p>The vertical divider between the two panes is draggable, so either "
+            "side can be widened at will.</p>"
+        ),
+        "guide_content_data": (
+            "<p>The Data Assets page reports each engine rule file's version, gating "
+            "status and consumers. Assets still awaiting expert sign-off are "
+            "labelled as such, so the current capability boundary stays visible.</p>"
+        ),
+        "guide_content_tips": (
+            "<ul>"
+            "<li><b>Drag the dividers</b>: the vertical/horizontal dividers inside "
+            "the pages are draggable, so adjacent panes can be resized freely.</li>"
+            "<li><b>Drag column widths</b>: in the results table and elsewhere, "
+            "columns resize by dragging their header dividers; the last column "
+            "absorbs the remaining width.</li>"
+            "<li><b>Language & appearance</b>: the toolbar switches Chinese / "
+            "English and light / dark without a restart.</li>"
+            "<li><b>Open this guide again</b>: click the Getting-started button on "
+            "the toolbar, or the same entry in the Help menu.</li>"
+            "</ul>"
+        ),
         # -- common --
         "lang": "Language",
         "lang_auto": "Auto",

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from prokname.presentation import decision
 from prokname.routing import route
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -20,6 +21,7 @@ from PySide6.QtWidgets import (
     QLabel,
     QMessageBox,
     QPushButton,
+    QSplitter,
     QTableWidget,
     QTableWidgetItem,
     QTextEdit,
@@ -105,13 +107,26 @@ class RouteView(QWidget):
         self.paths_table.setColumnWidth(0, 100)
         self.paths_table.setColumnWidth(1, 120)
         self.paths_table.horizontalHeader().setStretchLastSection(True)
-        root.addWidget(self.paths_table, 1)
 
         # warnings + notes
         self.info_box = QTextEdit()
         self.info_box.setReadOnly(True)
-        self.info_box.setMaximumHeight(150)
-        root.addWidget(self.info_box)
+
+        # path table and the warnings/notes pane share a vertical splitter, so
+        # the divider between them is draggable — a long trade-off list can be
+        # given the room the fixed 150 px cap used to deny it.
+        self.splitter = QSplitter(Qt.Orientation.Vertical)
+        self.splitter.setHandleWidth(6)
+        self.splitter.setChildrenCollapsible(False)
+        self.splitter.addWidget(self.paths_table)
+        self.splitter.addWidget(self.info_box)
+        # the path table keeps the extra space; the notes pane keeps its own.
+        # Explicit initial sizes: QSplitter's size-hint default would hand the
+        # notes pane more room than the path table, which reads upside-down.
+        self.splitter.setStretchFactor(0, 1)
+        self.splitter.setStretchFactor(1, 0)
+        self.splitter.setSizes([600, 180])
+        root.addWidget(self.splitter, 1)
 
     def _connect_signals(self) -> None:
         self.route_btn.clicked.connect(self._on_route)

@@ -7,6 +7,36 @@ All notable changes to ProkName Studio are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-10-25
+
+### Changed — adjustable layout
+
+- **The Generate results table's columns are draggable.** Every column of the
+  candidates table now resizes by dragging its header divider, instead of the
+  name column stretching and the metadata columns being pinned to their content
+  width. The columns auto-fit once on the first result set; after that the
+  widths stay whatever the user dragged them to. The last column still fills the
+  remaining width so the table never leaves a dead margin.
+- **The Generate page splits its results vertically on a draggable divider.** The
+  candidates table and the derivation tree share a `QSplitter`, replacing the
+  fixed 220 px derivation cap, so a long derivation can be given real room.
+- **The Project page splits its panes on a draggable divider.** The project list
+  and the candidates table share a horizontal `QSplitter` (the candidates pane
+  keeps the larger default share), so either side can be widened at will.
+- **The Route page splits its results vertically on a draggable divider.** The
+  viable-paths table and the warnings/notes pane share a `QSplitter`, replacing
+  the fixed 150 px notes cap.
+
+### Added — getting-started guide
+
+- **A new-user guide, closed by default.** A step-by-step walkthrough of the
+  recommended workflow (check → generate → route → project → data assets) plus an
+  overview and a set of interface tips. Each step tied to a page carries a
+  "go to this page" button that switches the navigation, so reading and acting
+  are the same gesture. The dialog is modeless and built lazily; it opens only
+  from the **Getting-started button** on the toolbar (right of the appearance
+  switcher) or the same entry in the **Help** menu — it is never shown at startup.
+
 ## [0.1.0] - 2026-09-29
 
 First public release of **ProkName Studio**, the native desktop front end for

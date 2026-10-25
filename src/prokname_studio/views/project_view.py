@@ -27,6 +27,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QSpinBox,
+    QSplitter,
     QVBoxLayout,
     QWidget,
 )
@@ -78,8 +79,17 @@ class ProjectView(QWidget):
     def _build_ui(self) -> None:
         root = QHBoxLayout(self)
 
+        # The two panes live in a horizontal splitter, so the divider between
+        # them is draggable: a user working a long candidate list can widen the
+        # candidates pane without the project list disappearing.
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
+        self.splitter.setHandleWidth(6)
+        self.splitter.setChildrenCollapsible(False)
+
         # --- left: project list + create form ---
-        left = QVBoxLayout()
+        left_pane = QWidget()
+        left = QVBoxLayout(left_pane)
+        left.setContentsMargins(0, 0, 0, 0)
         self.projects_label = QLabel()
         self.projects_label.setObjectName("sectionHeader")
         left.addWidget(self.projects_label)
@@ -108,10 +118,10 @@ class ProjectView(QWidget):
         self.delete_btn = QPushButton()
         left.addWidget(self.delete_btn)
 
-        root.addLayout(left, 1)
-
         # --- right: candidates table + export ---
-        right = QVBoxLayout()
+        right_pane = QWidget()
+        right = QVBoxLayout(right_pane)
+        right.setContentsMargins(0, 0, 0, 0)
         self.candidates_label = QLabel()
         self.candidates_label.setObjectName("sectionHeader")
         right.addWidget(self.candidates_label)
@@ -146,7 +156,15 @@ class ProjectView(QWidget):
         export_row.addStretch(1)
         right.addLayout(export_row)
 
-        root.addLayout(right, 2)
+        # the candidates pane keeps the larger share, matching the old 1 : 2
+        # stretch — the splitter just makes the split point user-adjustable.
+        # Explicit initial sizes so the ratio does not depend on size hints.
+        self.splitter.addWidget(left_pane)
+        self.splitter.addWidget(right_pane)
+        self.splitter.setStretchFactor(0, 1)
+        self.splitter.setStretchFactor(1, 2)
+        self.splitter.setSizes([400, 800])
+        root.addWidget(self.splitter)
 
     def _apply_styles(self) -> None:
         """(Re-)resolve the colour this view states in a widget stylesheet."""
