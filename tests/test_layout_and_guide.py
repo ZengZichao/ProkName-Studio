@@ -13,15 +13,17 @@ import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QHeaderView, QSplitter
 
-pytest.skip(
-    "BISECT: temporarily disabled to isolate the ubuntu/3.11 shutdown abort",
-    allow_module_level=True,
-)
-
-from prokname_studio import i18n
+from prokname_studio import i18n  # noqa: F401 - bisect keeps the module importable
 from prokname_studio.main_window import MainWindow
 from prokname_studio.state import StudioState
 from prokname_studio.views import GenerateView, ProjectView, RouteView
+
+#: BISECT which half of this file runs on CI: "layout" skips the layout half,
+#: "guide" skips the guide half, None runs everything. Remove once the
+#: ubuntu/3.11 shutdown abort is located.
+BISECT: str | None = "layout"
+_skip_layout = pytest.mark.skipif(BISECT == "layout", reason="BISECT: layout half off")
+_skip_guide = pytest.mark.skipif(BISECT == "guide", reason="BISECT: guide half off")
 
 # A widget height the derivation/notes panes must no longer be capped at.
 _WIDGET_MAX = 16_777_215
@@ -75,6 +77,7 @@ def _fake_candidate(**overrides):
 # -- generate view: draggable columns ------------------------------------------
 
 
+@_skip_layout
 def test_generate_table_columns_are_interactive(qapp):
     view = GenerateView(StudioState())
     header = view.table.horizontalHeader()
@@ -86,6 +89,7 @@ def test_generate_table_columns_are_interactive(qapp):
     assert header.stretchLastSection()
 
 
+@_skip_layout
 def test_generate_column_width_survives_repopulation(qapp):
     """Dragging a column sticks: a re-render (language/theme switch, new
     generate) must not undo the width the user set."""
@@ -99,6 +103,7 @@ def test_generate_column_width_survives_repopulation(qapp):
     assert view.table.columnWidth(1) == 160
 
 
+@_skip_layout
 def test_generate_columns_autofit_once_on_first_result(qapp):
     view = GenerateView(StudioState())
     view._populate_table([_fake_candidate()])
@@ -113,6 +118,7 @@ def test_generate_columns_autofit_once_on_first_result(qapp):
 # -- generate view: vertical splitter ------------------------------------------
 
 
+@_skip_layout
 def test_generate_results_split_vertically_on_a_draggable_divider(qapp):
     view = GenerateView(StudioState())
     assert isinstance(view.splitter, QSplitter)
@@ -125,6 +131,7 @@ def test_generate_results_split_vertically_on_a_draggable_divider(qapp):
     assert view.deriv.maximumHeight() == _WIDGET_MAX
 
 
+@_skip_layout
 def test_generate_table_keeps_the_extra_space(qapp):
     # tall enough that the results area is not squeezed by the input form
     view = GenerateView(StudioState())
@@ -135,6 +142,7 @@ def test_generate_table_keeps_the_extra_space(qapp):
     _dispose(view)
 
 
+@_skip_layout
 def test_generate_splitter_resizes_the_derivation_pane(qapp):
     view = GenerateView(StudioState())
     view.resize(900, 780)
@@ -149,6 +157,7 @@ def test_generate_splitter_resizes_the_derivation_pane(qapp):
 # -- route view: vertical splitter ---------------------------------------------
 
 
+@_skip_layout
 def test_route_results_split_vertically_on_a_draggable_divider(qapp):
     view = RouteView(StudioState())
     assert isinstance(view.splitter, QSplitter)
@@ -162,6 +171,7 @@ def test_route_results_split_vertically_on_a_draggable_divider(qapp):
 # -- project view: horizontal splitter -----------------------------------------
 
 
+@_skip_layout
 def test_project_panes_split_horizontally_on_a_draggable_divider(qapp, tmp_store):
     view = ProjectView(StudioState())
     assert isinstance(view.splitter, QSplitter)
@@ -170,6 +180,7 @@ def test_project_panes_split_horizontally_on_a_draggable_divider(qapp, tmp_store
     assert not view.splitter.childrenCollapsible()
 
 
+@_skip_layout
 def test_project_candidates_pane_keeps_the_larger_share(qapp, tmp_store):
     """The candidates pane starts with the larger share (the old 1 : 2 stretch);
     the splitter only makes the split point user-adjustable."""
@@ -181,6 +192,7 @@ def test_project_candidates_pane_keeps_the_larger_share(qapp, tmp_store):
     _dispose(view)
 
 
+@_skip_layout
 def test_project_splitter_resizes_the_panes(qapp, tmp_store):
     view = ProjectView(StudioState())
     view.resize(1000, 600)
@@ -195,6 +207,7 @@ def test_project_splitter_resizes_the_panes(qapp, tmp_store):
 # -- the getting-started guide --------------------------------------------------
 
 
+@_skip_guide
 def test_guide_is_closed_by_default(qapp):
     """The walkthrough is opt-in: nothing may put it on screen at startup."""
     w = MainWindow(StudioState())
@@ -204,6 +217,7 @@ def test_guide_is_closed_by_default(qapp):
     assert w._guide_dialog is None
 
 
+@_skip_guide
 def test_guide_opens_from_the_toolbar_button(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
@@ -216,6 +230,7 @@ def test_guide_opens_from_the_toolbar_button(qapp):
     _dispose(w)
 
 
+@_skip_guide
 def test_guide_button_and_menu_entry_are_labelled(qapp):
     w = MainWindow(StudioState())
     assert w.guide_btn.text() == i18n.tr("guide_button")
@@ -226,6 +241,7 @@ def test_guide_button_and_menu_entry_are_labelled(qapp):
     _dispose(w)
 
 
+@_skip_guide
 def test_go_to_page_switches_the_navigation(qapp):
     w = MainWindow(StudioState())
     w.go_to_page("route")
@@ -238,6 +254,7 @@ def test_go_to_page_switches_the_navigation(qapp):
     _dispose(w)
 
 
+@_skip_guide
 def test_guide_steps_and_navigation(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
@@ -267,6 +284,7 @@ def test_guide_steps_and_navigation(qapp):
     _dispose(w)
 
 
+@_skip_guide
 def test_guide_retranslates(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
@@ -279,6 +297,7 @@ def test_guide_retranslates(qapp):
     _dispose(w)
 
 
+@_skip_guide
 def test_guide_i18n_keys_exist_in_both_languages():
     keys = [
         "guide_button",
