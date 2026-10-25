@@ -222,7 +222,7 @@ def test_guide_is_closed_by_default(qapp):
     assert w._guide_dialog is None
 
 
-@_skip_dialogs
+@_skip_guide
 def test_guide_opens_from_the_toolbar_button(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
