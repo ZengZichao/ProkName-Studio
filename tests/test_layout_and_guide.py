@@ -11,7 +11,7 @@ from types import SimpleNamespace
 
 import pytest
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QHeaderView, QSplitter
+from PySide6.QtWidgets import QApplication, QHeaderView, QSplitter
 
 from prokname_studio import i18n
 from prokname_studio.main_window import MainWindow
@@ -20,6 +20,20 @@ from prokname_studio.views import GenerateView, ProjectView, RouteView
 
 # A widget height the derivation/notes panes must no longer be capped at.
 _WIDGET_MAX = 16_777_215
+
+
+def _dispose(*widgets) -> None:
+    """Close and delete widgets before the test ends.
+
+    Every window here subscribes to the module-global i18n signal; leaking them
+    until interpreter shutdown leaves their deallocation to the final GC pass,
+    whose ordering against the signal's manager is what made the 3.11 CI leg
+    abort at exit. Destroying them inside the test makes teardown deterministic.
+    """
+    for widget in widgets:
+        widget.close()
+        widget.deleteLater()
+    QApplication.instance().processEvents()
 
 
 @pytest.fixture(autouse=True)
@@ -113,7 +127,7 @@ def test_generate_table_keeps_the_extra_space(qapp):
     view.show()
     sizes = view.splitter.sizes()
     assert sizes[0] > sizes[1]
-    view.close()
+    _dispose(view)
 
 
 def test_generate_splitter_resizes_the_derivation_pane(qapp):
@@ -124,7 +138,7 @@ def test_generate_splitter_resizes_the_derivation_pane(qapp):
     want = (total + 2) // 3
     view.splitter.setSizes([total - want, want])
     assert view.deriv.height() >= want - 10
-    view.close()
+    _dispose(view)
 
 
 # -- route view: vertical splitter ---------------------------------------------
@@ -159,7 +173,7 @@ def test_project_candidates_pane_keeps_the_larger_share(qapp, tmp_store):
     view.show()
     sizes = view.splitter.sizes()
     assert sizes[1] > sizes[0]
-    view.close()
+    _dispose(view)
 
 
 def test_project_splitter_resizes_the_panes(qapp, tmp_store):
@@ -170,7 +184,7 @@ def test_project_splitter_resizes_the_panes(qapp, tmp_store):
     want = (total + 3) // 4
     view.splitter.setSizes([total - want, want])
     assert view.splitter.widget(1).width() >= want - 10
-    view.close()
+    _dispose(view)
 
 
 # -- the getting-started guide --------------------------------------------------
@@ -181,7 +195,7 @@ def test_guide_is_closed_by_default(qapp):
     w = MainWindow(StudioState())
     assert w._guide_dialog is None
     w.show()
-    w.close()
+    _dispose(w)
     assert w._guide_dialog is None
 
 
@@ -193,8 +207,8 @@ def test_guide_opens_from_the_toolbar_button(qapp):
     assert not dialog.isHidden()
     # modeless: the user has to be able to act on the pages underneath
     assert not dialog.isModal()
-    w._guide_dialog = None  # drop before the window closes with it
-    dialog.close()
+    # disposing the window deletes its child dialog with it
+    _dispose(w)
 
 
 def test_guide_button_and_menu_entry_are_labelled(qapp):
@@ -204,6 +218,7 @@ def test_guide_button_and_menu_entry_are_labelled(qapp):
     i18n.set_language("zh")
     assert w.guide_btn.text() == i18n.tr("guide_button")
     assert w.guide_btn.text() == "新手引导"
+    _dispose(w)
 
 
 def test_go_to_page_switches_the_navigation(qapp):
@@ -215,6 +230,7 @@ def test_go_to_page_switches_the_navigation(qapp):
     # an unknown key changes nothing instead of crashing the walkthrough
     w.go_to_page("no_such_page")
     assert w.nav.currentRow() == 3
+    _dispose(w)
 
 
 def test_guide_steps_and_navigation(qapp):
@@ -242,8 +258,8 @@ def test_guide_steps_and_navigation(qapp):
     dialog.next_btn.click()  # no-op at the end
     assert dialog.step_list.currentRow() == 6
 
-    dialog.close()
-    w._guide_dialog = None
+    # disposing the window deletes its child dialog with it
+    _dispose(w)
 
 
 def test_guide_retranslates(qapp):
@@ -254,8 +270,8 @@ def test_guide_retranslates(qapp):
     i18n.set_language("zh")
     assert dialog.step_list.item(2).text() == "② 生成"
     assert "生成" in dialog.text.toPlainText()
-    dialog.close()
-    w._guide_dialog = None
+    # disposing the window deletes its child dialog with it
+    _dispose(w)
 
 
 def test_guide_i18n_keys_exist_in_both_languages():
