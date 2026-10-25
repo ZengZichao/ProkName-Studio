@@ -13,6 +13,11 @@ import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QHeaderView, QSplitter
 
+pytest.skip(
+    "BISECT: temporarily disabled to isolate the ubuntu/3.11 shutdown abort",
+    allow_module_level=True,
+)
+
 from prokname_studio import i18n
 from prokname_studio.main_window import MainWindow
 from prokname_studio.state import StudioState

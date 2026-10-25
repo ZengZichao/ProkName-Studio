@@ -25,11 +25,6 @@ from pathlib import Path
 
 import pytest
 
-pytest.skip(
-    "BISECT: temporarily disabled to isolate the ubuntu/3.11 shutdown abort",
-    allow_module_level=True,
-)
-
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_DIR = REPO_ROOT / "src" / "prokname_studio"
 INIT_FILE = PACKAGE_DIR / "__init__.py"
