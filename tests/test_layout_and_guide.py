@@ -222,7 +222,7 @@ def test_guide_is_closed_by_default(qapp):
     assert w._guide_dialog is None
 
 
-@_skip_guide
+@_skip_dialogs
 def test_guide_opens_from_the_toolbar_button(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
@@ -259,7 +259,7 @@ def test_go_to_page_switches_the_navigation(qapp):
     _dispose(w)
 
 
-@_skip_dialogs
+@_skip_guide
 def test_guide_steps_and_navigation(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
