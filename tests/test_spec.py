@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import importlib.util
 import re
+import runpy
 import sys
 import types
 from pathlib import Path
@@ -103,7 +104,7 @@ class _SpecRun:
 
 
 def _exec_spec(*, datas: list[tuple[str, str]] | None = None) -> _SpecRun:
-    """exec() ProkNameStudio.spec against pure-Python PyInstaller stubs.
+    """Run ProkNameStudio.spec against pure-Python PyInstaller stubs.
 
     ``datas`` overrides what ``collect_data_files`` reports (used to prove the
     spec's own build-time guard fires); ``None`` means the real stub walk.
@@ -165,9 +166,14 @@ def _exec_spec(*, datas: list[tuple[str, str]] | None = None) -> _SpecRun:
     saved = {name: sys.modules.get(name) for name in injected}
     sys.modules.update(injected)
     try:
-        code = compile(SPEC_FILE.read_text(encoding="utf-8"), str(SPEC_FILE), "exec")
-        exec(code, namespace)
-        run.read_version = namespace["_read_version"]
+        # runpy executes the repository's own tracked spec file with the stub
+        # globals assembled above — the same first-party file and the same
+        # stubs as the old hand-rolled exec(), through the stdlib's supported
+        # runner for "execute this script file".
+        result = runpy.run_path(
+            str(SPEC_FILE), init_globals=namespace, run_name=namespace["__name__"]
+        )
+        run.read_version = result["_read_version"]
     finally:
         for name, previous in saved.items():
             if previous is None:

@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QMainWindow,
     QMenuBar,
     QMessageBox,
+    QPushButton,
     QStackedWidget,
     QStatusBar,
     QToolBar,
@@ -29,6 +30,7 @@ from PySide6.QtWidgets import (
 )
 
 from . import __version__, appearance, i18n
+from .components.guide_dialog import GuideDialog
 from .state import StudioState
 from .views import CheckView, DataView, GenerateView, ProjectView, RouteView
 
@@ -58,6 +60,9 @@ class MainWindow(QMainWindow):
         super().__init__()
         self._state = state
         self._views: dict[str, QWidget] = {}
+        # the guide is built lazily on first open — a window that ships with a
+        # tutorial already on screen is a tutorial the user never asked for
+        self._guide_dialog: GuideDialog | None = None
         self._build_ui()
         self._connect_signals()
         self.retranslate_ui()
@@ -113,6 +118,12 @@ class MainWindow(QMainWindow):
         self.lang_bar.addWidget(self.theme_combo)
         self.lang_bar.addSeparator()
 
+        # the getting-started guide: closed by default, opened only from this
+        # button (or the Help-menu entry) so a veteran never sees it uninvited
+        self.guide_btn = QPushButton()
+        self.lang_bar.addWidget(self.guide_btn)
+        self.lang_bar.addSeparator()
+
         self.subtitle_label = QLabel()
         # one line — a wrapping label would pump the toolbar height up and down
         # while the window is resized
@@ -126,11 +137,15 @@ class MainWindow(QMainWindow):
         self.menu_file = self.menu_bar.addMenu("")
         self.act_exit = self.menu_file.addAction("")
         self.menu_help = self.menu_bar.addMenu("")
+        self.act_guide = self.menu_help.addAction("")
         self.act_about = self.menu_help.addAction("")
         # native niceties: Cmd+Q to quit, About moved into the app menu on macOS
         self.act_exit.setShortcut(QKeySequence.StandardKey.Quit)
         self.act_exit.setMenuRole(QAction.MenuRole.QuitRole)
         self.act_about.setMenuRole(QAction.MenuRole.AboutRole)
+        # the guide stays in the Help menu: NoRole keeps macOS's text-heuristic
+        # menu role from second-guessing where a "Getting started" item belongs
+        self.act_guide.setMenuRole(QAction.MenuRole.NoRole)
 
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
@@ -141,6 +156,8 @@ class MainWindow(QMainWindow):
         self.theme_combo.currentIndexChanged.connect(self._on_theme_changed)
         self.act_exit.triggered.connect(self.close)
         self.act_about.triggered.connect(self._show_about)
+        self.guide_btn.clicked.connect(self._show_guide)
+        self.act_guide.triggered.connect(self._show_guide)
 
     # -- behaviour ------------------------------------------------------------
 
@@ -171,6 +188,30 @@ class MainWindow(QMainWindow):
             f"{DISCLAIMER}"
         )
         QMessageBox.about(self, i18n.tr("menu_about"), text)
+
+    def _show_guide(self) -> None:
+        """Open (or re-raise) the getting-started guide.
+
+        Modeless on purpose: the guide walks the user through the real pages,
+        so it must not block them. It is built lazily and only from the toolbar
+        button and the Help-menu entry — never at startup.
+        """
+        if self._guide_dialog is None:
+            self._guide_dialog = GuideDialog(self.go_to_page, self)
+        self._guide_dialog.show()
+        self._guide_dialog.raise_()
+        self._guide_dialog.activateWindow()
+
+    def go_to_page(self, key: str) -> None:
+        """Switch the navigation to the page registered under ``key``.
+
+        The guide uses this to send the reader from a step to the screen it
+        describes; unknown keys are ignored rather than crashing the walk.
+        """
+        for i in range(self.nav.count()):
+            if self.nav.item(i).data(Qt.ItemDataRole.UserRole) == key:
+                self.nav.setCurrentRow(i)
+                return
 
     # -- i18n -----------------------------------------------------------------
 
@@ -219,6 +260,8 @@ class MainWindow(QMainWindow):
         self.menu_help.setTitle(i18n.tr("menu_help"))
         self.act_exit.setText(i18n.tr("menu_exit"))
         self.act_about.setText(i18n.tr("menu_about"))
+        self.guide_btn.setText(i18n.tr("guide_button"))
+        self.act_guide.setText(i18n.tr("guide_button"))
         self.status_bar.showMessage(
             f"prokname v{engine_version} · {i18n.tr('app_title')}"
         )

@@ -16,6 +16,7 @@ from prokname.engine.orthography import latinize_words
 from prokname.presentation import decision
 from prokname.storage import Candidate as StoredCandidate
 from prokname.storage import ProjectStore
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
@@ -29,6 +30,7 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QMessageBox,
     QPushButton,
+    QSplitter,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
@@ -160,23 +162,43 @@ class GenerateView(QWidget):
         self.results_label.setObjectName("sectionHeader")
         root.addWidget(self.results_label)
 
+        # table and derivation pane live in a vertical splitter, so the divider
+        # between them is draggable: a reader who wants the full derivation can
+        # give it the room the fixed 220 px cap used to deny it.
+        self.splitter = QSplitter(Qt.Orientation.Vertical)
+        self.splitter.setHandleWidth(6)
+        self.splitter.setChildrenCollapsible(False)
+
         self.table = QTableWidget(0, 5)
         self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.table.setAlternatingRowColors(True)
         self.table.setWordWrap(False)
         self.table.verticalHeader().setVisible(False)
-        # name stays readable; metadata columns hug their content
+        # every column keeps a draggable header divider (Interactive), and the
+        # last column still absorbs whatever width the others leave so the
+        # table always fills the pane. The first population auto-fits the
+        # columns once; after that the widths stay whatever the user dragged.
         header = self.table.horizontalHeader()
-        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        for col in (1, 2, 3):
-            header.setSectionResizeMode(col, QHeaderView.ResizeMode.ResizeToContents)
+        for col in range(5):
+            header.setSectionResizeMode(col, QHeaderView.ResizeMode.Interactive)
         header.setStretchLastSection(True)
-        root.addWidget(self.table, 1)
+        header.setMinimumSectionSize(40)
+        self._columns_fitted = False
+        for col, width in enumerate((240, 110, 110, 150)):
+            self.table.setColumnWidth(col, width)
+
+        self.splitter.addWidget(self.table)
 
         self.deriv = DerivationView()
-        self.deriv.setMaximumHeight(220)
-        root.addWidget(self.deriv)
+        self.splitter.addWidget(self.deriv)
+        # the table keeps the extra space; the derivation pane keeps what it has.
+        # Explicit initial sizes: QSplitter's size-hint default would hand the
+        # tree more room than the table, which reads upside-down.
+        self.splitter.setStretchFactor(0, 1)
+        self.splitter.setStretchFactor(1, 0)
+        self.splitter.setSizes([600, 200])
+        root.addWidget(self.splitter, 1)
 
         self.add_btn = QPushButton()
         self.add_btn.setEnabled(False)
@@ -359,7 +381,24 @@ class GenerateView(QWidget):
             short = (c.derivation or "-").split("\n", 1)[0]
             self.table.setItem(i, 4, QTableWidgetItem(short))
         if candidates:
+            self._fit_columns_once()
             self.table.selectRow(0)
+
+    def _fit_columns_once(self) -> None:
+        """Auto-fit the interactive columns on the first real result set.
+
+        Runs once so a later repopulation (language switch, theme switch,
+        another generate) cannot undo widths the user has dragged by hand. The
+        name column is clamped: unbounded content sizing lets one long name
+        push the metadata columns into ellipsis.
+        """
+        if self._columns_fitted:
+            return
+        self._columns_fitted = True
+        for col in range(4):
+            self.table.resizeColumnToContents(col)
+        name_width = self.table.columnWidth(0)
+        self.table.setColumnWidth(0, min(max(name_width, 200), 380))
 
     def _on_selection_changed(self) -> None:
         row = self.table.currentRow()

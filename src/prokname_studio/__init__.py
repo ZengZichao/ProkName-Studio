@@ -13,7 +13,7 @@ never carry three different version numbers.
 """
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 #: What this release of Studio was built against. The engine's own version is
 #: read at runtime from ``prokname.__version__``; this floor is the contract the

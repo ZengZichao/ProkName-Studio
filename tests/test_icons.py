@@ -21,7 +21,16 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 def _svg_root() -> ET.Element:
-    return ET.fromstring(icons.icon_svg())
+    raw = icons.icon_svg()
+    # The asset is first-party, but parse it defensively anyway: reject any DTD
+    # or entity definition before ElementTree sees the bytes, so entity
+    # expansion is impossible on every Python this suite runs under — not just
+    # the versions where ET itself refuses entity definitions.
+    lowered = raw.lower()
+    assert b"<!doctype" not in lowered and b"<!entity" not in lowered, (
+        "the packaged icon must stay a plain SVG: no DTD, no entity definitions"
+    )
+    return ET.fromstring(raw)
 
 
 def test_the_svg_is_packaged_and_well_formed():
@@ -67,7 +76,14 @@ def test_app_icon_holds_every_size_it_promises():
     for size in icons.ICON_SIZES:
         pixmap = icon.pixmap(size, size)
         assert not pixmap.isNull(), f"no pixmap for {size}x{size}"
-        assert (pixmap.width(), pixmap.height()) == (size, size)
+        # on a high-DPI screen Qt hands the pixmap back at the device pixel
+        # ratio, so the promise the icon keeps is "logical size × DPR" pixels
+        dpr = pixmap.devicePixelRatio() or 1
+        expected = (round(size * dpr), round(size * dpr))
+        assert (pixmap.width(), pixmap.height()) == expected, (
+            f"{size}x{size} request returned {pixmap.width()}x{pixmap.height()} "
+            f"at dpr {dpr}"
+        )
 
 
 def test_the_degraded_glyph_renders_at_any_size():
