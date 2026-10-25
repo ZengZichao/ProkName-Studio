@@ -18,12 +18,17 @@ from prokname_studio.main_window import MainWindow
 from prokname_studio.state import StudioState
 from prokname_studio.views import GenerateView, ProjectView, RouteView
 
-#: BISECT which half of this file runs on CI: "layout" skips the layout half,
-#: "guide" skips the guide half, None runs everything. Remove once the
-#: ubuntu/3.11 shutdown abort is located.
-BISECT: str | None = "layout"
-_skip_layout = pytest.mark.skipif(BISECT == "layout", reason="BISECT: layout half off")
+#: BISECT which tests run on CI: "layout" skips the layout half, "dialogs"
+#: skips the layout half AND the guide tests that open a GuideDialog, None runs
+#: everything. Remove once the ubuntu/3.11 shutdown abort is located.
+BISECT: str | None = "dialogs"
+_skip_layout = pytest.mark.skipif(
+    BISECT in ("layout", "dialogs"), reason="BISECT: layout half off"
+)
 _skip_guide = pytest.mark.skipif(BISECT == "guide", reason="BISECT: guide half off")
+_skip_dialogs = pytest.mark.skipif(
+    BISECT == "dialogs", reason="BISECT: dialog-opening tests off"
+)
 
 # A widget height the derivation/notes panes must no longer be capped at.
 _WIDGET_MAX = 16_777_215
@@ -217,7 +222,7 @@ def test_guide_is_closed_by_default(qapp):
     assert w._guide_dialog is None
 
 
-@_skip_guide
+@_skip_dialogs
 def test_guide_opens_from_the_toolbar_button(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
@@ -254,7 +259,7 @@ def test_go_to_page_switches_the_navigation(qapp):
     _dispose(w)
 
 
-@_skip_guide
+@_skip_dialogs
 def test_guide_steps_and_navigation(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
@@ -284,7 +289,7 @@ def test_guide_steps_and_navigation(qapp):
     _dispose(w)
 
 
-@_skip_guide
+@_skip_dialogs
 def test_guide_retranslates(qapp):
     w = MainWindow(StudioState())
     w._show_guide()
