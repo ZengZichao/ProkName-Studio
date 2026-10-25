@@ -10,7 +10,7 @@ from __future__ import annotations
 from types import SimpleNamespace
 
 import pytest
-from PySide6.QtCore import Qt
+from PySide6.QtCore import QCoreApplication, QEvent, Qt
 from PySide6.QtWidgets import QApplication, QHeaderView, QSplitter
 
 from prokname_studio import i18n
@@ -23,16 +23,27 @@ _WIDGET_MAX = 16_777_215
 
 
 def _dispose(*widgets) -> None:
-    """Close and delete widgets before the test ends.
+    """Tear widgets down deterministically before the test ends.
 
-    Every window here subscribes to the module-global i18n signal; leaking them
-    until interpreter shutdown leaves their deallocation to the final GC pass,
-    whose ordering against the signal's manager is what made the 3.11 CI leg
-    abort at exit. Destroying them inside the test makes teardown deterministic.
+    Every window here subscribes to the module-global i18n signal, and
+    ``deleteLater`` only takes effect when the event loop delivers the deferred
+    delete — a bare ``processEvents()`` does not. Without forcing it through,
+    the widgets stayed alive into the next test (whose language fixture then
+    fired ``languageChanged`` into them) and into interpreter shutdown, whose
+    GC ordering against the signal's QObject aborted the ubuntu/3.11 CI leg at
+    exit (``none_dealloc``). Disconnect from the signal, close, and force the
+    deferred deletion through before returning.
     """
+    manager = i18n._manager()
     for widget in widgets:
+        try:
+            manager.languageChanged.disconnect(widget.retranslate_ui)
+        except RuntimeError:
+            pass  # not connected (already destroyed) — nothing to undo
         widget.close()
         widget.deleteLater()
+    QApplication.instance().processEvents()
+    QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
     QApplication.instance().processEvents()
 
 
@@ -121,10 +132,20 @@ def test_generate_results_split_vertically_on_a_draggable_divider(qapp):
 
 
 def test_generate_table_keeps_the_extra_space(qapp):
-    # tall enough that the results area is not squeezed by the input form
+    """With room to spare the table (stretch 1) — not the derivation pane —
+    absorbs it."""
+    from PySide6.QtWidgets import QGroupBox
+
     view = GenerateView(StudioState())
-    view.resize(900, 1040)
+    view.resize(900, 900)
     view.show()
+    # A short screen clamps the window, so guarantee the surplus instead of
+    # hoping for it: hide the input form (irrelevant to what this checks) and
+    # give the splitter nearly the whole page.
+    groups = view.findChildren(QGroupBox)
+    if groups:
+        groups[0].hide()
+    QApplication.instance().processEvents()
     sizes = view.splitter.sizes()
     assert sizes[0] > sizes[1]
     _dispose(view)
