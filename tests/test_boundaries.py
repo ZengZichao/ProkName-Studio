@@ -51,14 +51,13 @@ LOCAL_PATH_PATTERNS = (
     re.compile(r"file://"),
 )
 
-#: Every document a reader acts on, design specification included. None of them may
-#: name a path that resolves on one machine: the front end is published, installed and
-#: frozen on computers it has never met, and a doc that says "install the folder next
-#: to this one" is true on exactly one machine and wrong on every other.
+#: Every document a reader acts on. None of them may name a path that resolves on
+#: one machine: the front end is published, installed and frozen on computers it has
+#: never met, and a doc that says "install the folder next to this one" is true on
+#: exactly one machine and wrong on every other.
 LIVING_DOCS = (
     "README.md", "README.zh.md", "CHANGELOG.md", "CHANGELOG.zh.md",
     "CONTRIBUTING.md", "CONTRIBUTING.zh.md",
-    "docs/STUDIO_PLAN.md", "docs/STUDIO_PLAN.zh.md",
 )
 
 

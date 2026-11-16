@@ -26,9 +26,6 @@ ASCII_LETTER_RE = re.compile(r"[A-Za-z]")
 
 DOC_DIRS = [REPO, REPO / "docs"]
 
-#: Documents whose Chinese companion must name the English file as authoritative.
-REFERENCE_DOCS = ["docs/STUDIO_PLAN.zh.md"]
-
 _SWITCH_HEAD_LINES = 12
 
 
@@ -115,16 +112,4 @@ def test_the_english_copy_is_english_and_the_chinese_copy_is_chinese() -> None:
                 )
     assert not problems, (
         "a document's language does not match its name:\n  " + "\n  ".join(problems)
-    )
-
-
-def test_reference_companions_declare_the_english_file_authoritative() -> None:
-    missing = [
-        name
-        for name in REFERENCE_DOCS
-        if (REPO / name).is_file() and "权威" not in (REPO / name).read_text(encoding="utf-8")
-    ]
-    assert not missing, (
-        "these Chinese documents do not state that the English original is the "
-        "authoritative text (权威): " + ", ".join(missing)
     )

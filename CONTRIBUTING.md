@@ -46,9 +46,8 @@ quotes an upstream source — a licence footer, an API response — the quote st
 verbatim in its original language in both copies, and the English file is the
 authoritative one.
 
-`docs/STUDIO_PLAN.md` is the design specification: it explains why the front end is
-shaped as it is. The documents a reader acts on are `README` and `CHANGELOG`, and
-neither points at a folder next to this one.
+The documents a reader acts on are `README` and `CHANGELOG`, and neither points at
+a folder next to this one.
 
 ## Testing
 
